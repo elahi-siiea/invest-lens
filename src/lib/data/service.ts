@@ -36,9 +36,13 @@ async function liveSeries(symbol: string, apiKey: string): Promise<PriceSeries> 
   }
 }
 
+export function activeSource(forceSample: boolean): DataSource {
+  return process.env.TWELVE_DATA_API_KEY && !forceSample ? "live" : "sample";
+}
+
 export async function loadPrices(symbols: readonly string[], forceSample: boolean): Promise<PricesResponse> {
   const apiKey = process.env.TWELVE_DATA_API_KEY;
-  const source: DataSource = apiKey && !forceSample ? "live" : "sample";
+  const source = activeSource(forceSample);
 
   const series =
     source === "live" && apiKey

@@ -1,6 +1,6 @@
-import { loadPrices } from "@/lib/data/service";
+import { activeSource, loadPrices } from "@/lib/data/service";
 import { MAX_TICKERS, normalizeSymbol } from "@/lib/data/tickers";
-import { DataError, type ApiErrorBody, type DataErrorCode } from "@/lib/data/types";
+import { DataError, type ApiErrorBody, type DataErrorCode, type DataSource } from "@/lib/data/types";
 
 const STATUS: Record<DataErrorCode, number> = {
   INVALID_TICKER: 404,
@@ -8,12 +8,13 @@ const STATUS: Record<DataErrorCode, number> = {
   PLAN_LIMIT: 422,
   RATE_LIMIT: 429,
   NETWORK: 502,
+  OFFLINE: 503,
   UPSTREAM: 502,
   BAD_REQUEST: 400,
 };
 
-function errorResponse(error: DataError): Response {
-  const body: ApiErrorBody = { error: { code: error.code, message: error.message, symbol: error.symbol } };
+function errorResponse(error: DataError, source?: DataSource): Response {
+  const body: ApiErrorBody = { error: { code: error.code, message: error.message, symbol: error.symbol, source } };
   const headers: Record<string, string> = { "Cache-Control": "no-store" };
   if (error.code === "RATE_LIMIT") headers["Retry-After"] = "60";
   return Response.json(body, { status: STATUS[error.code], headers });
@@ -29,13 +30,14 @@ export async function GET(request: Request): Promise<Response> {
     return errorResponse(new DataError("BAD_REQUEST", "Provide between 1 and 6 valid ticker symbols."));
   }
 
+  const forceSample = params.get("source") === "sample";
   try {
-    const data = await loadPrices(symbols as string[], params.get("source") === "sample");
+    const data = await loadPrices(symbols as string[], forceSample);
     return Response.json(data, {
       headers: { "Cache-Control": "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400" },
     });
   } catch (error) {
-    if (error instanceof DataError) return errorResponse(error);
-    return errorResponse(new DataError("UPSTREAM", "Something went wrong while loading prices."));
+    if (error instanceof DataError) return errorResponse(error, activeSource(forceSample));
+    return errorResponse(new DataError("UPSTREAM", "Something went wrong while loading prices."), activeSource(forceSample));
   }
 }

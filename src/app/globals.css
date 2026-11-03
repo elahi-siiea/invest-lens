@@ -1,26 +1,108 @@
 @import "tailwindcss";
 
+/*
+ * Palette: warm paper, green-black ink, one copper accent.
+ * Gain/loss colors are used on figures only, always next to a sign or label.
+ * Series colors encode data; they are not decoration.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --paper: #f6f3ec;
+  --surface: #fdfbf7;
+  --ink: #14201b;
+  --muted: #55605a;
+  --line: #d9d4c7;
+  --edge: #7b8279;
+  --accent: #9a4a1b;
+  --on-accent: #ffffff;
+  --gain: #1f6b45;
+  --loss: #a63a2b;
+  --series-1: #1e5f74;
+  --series-2: #9a4a1b;
+  --series-3: #5b7f2a;
+  --series-4: #7a4e8c;
+  --series-5: #8a6d12;
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root[data-theme="dark"] {
+  --paper: #101814;
+  --surface: #17211c;
+  --ink: #ece9e0;
+  --muted: #a3aea6;
+  --line: #2a362f;
+  --edge: #6e7a72;
+  --accent: #e08a57;
+  --on-accent: #101814;
+  --gain: #5fc38a;
+  --loss: #f08a7a;
+  --series-1: #4fa3c0;
+  --series-2: #e08a57;
+  --series-3: #9cbf5a;
+  --series-4: #b995cc;
+  --series-5: #d8b84a;
+  color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not([data-theme="light"]) {
+    --paper: #101814;
+    --surface: #17211c;
+    --ink: #ece9e0;
+    --muted: #a3aea6;
+    --line: #2a362f;
+    --edge: #6e7a72;
+    --accent: #e08a57;
+    --on-accent: #101814;
+    --gain: #5fc38a;
+    --loss: #f08a7a;
+    --series-1: #4fa3c0;
+    --series-2: #e08a57;
+    --series-3: #9cbf5a;
+    --series-4: #b995cc;
+    --series-5: #d8b84a;
+    color-scheme: dark;
   }
 }
 
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-edge: var(--edge);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-gain: var(--gain);
+  --color-loss: var(--loss);
+  --font-sans: "Instrument Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces Variable", ui-serif, Georgia, serif;
+  --radius-control: 6px;
+  --radius-panel: 10px;
+}
+
+html {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100dvh;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

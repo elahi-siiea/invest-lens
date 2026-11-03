@@ -2,7 +2,7 @@
 
 import { HelpTip } from "@/components/ui/HelpTip";
 import { SliderField } from "@/components/ui/SliderField";
-import { costOfFees, simulateGrowth } from "@/lib/finance";
+import { costOfFees, simulateGrowth, simulateRange } from "@/lib/finance";
 import { formatUsd } from "@/lib/format";
 import { usePersistedState } from "@/lib/storage";
 import { FeeCard } from "./FeeCard";
@@ -25,6 +25,7 @@ export function SimulatorView() {
   const input = toSimulationInput(settings);
   const points = simulateGrowth(input);
   const impact = costOfFees(input);
+  const range = simulateRange(input, settings.volatilityPct / 100);
   const last = points.at(-1);
 
   return (
@@ -76,7 +77,12 @@ export function SimulatorView() {
                   type="button"
                   aria-pressed={active}
                   onClick={() =>
-                    update({ returnPct: preset.returnPct, inflationPct: preset.inflationPct, feePct: preset.feePct })
+                    update({
+                      returnPct: preset.returnPct,
+                      inflationPct: preset.inflationPct,
+                      feePct: preset.feePct,
+                      volatilityPct: preset.volatilityPct,
+                    })
                   }
                   className={`min-h-14 rounded-control border px-2 py-2 text-center text-sm font-medium transition-colors ${
                     active ? "border-accent bg-accent text-on-accent" : "border-edge bg-surface hover:border-ink"
@@ -91,7 +97,7 @@ export function SimulatorView() {
             })}
           </div>
           <p className="mt-2 text-sm text-muted">
-            Presets set the return, inflation and fee. They are example assumptions, not predictions.
+            Presets set the return, volatility, inflation and fee. They are example assumptions, not predictions.
           </p>
 
           <div className="mt-8 space-y-6">
@@ -130,6 +136,19 @@ export function SimulatorView() {
               {...LIMITS.returnPct}
             />
             <SliderField
+              label="Expected volatility"
+              suffix="%"
+              help={
+                <HelpTip term="volatility">
+                  How much returns swing from year to year. Higher volatility widens the shaded range of outcomes on the
+                  chart. Broad stock funds usually swing more than bond funds.
+                </HelpTip>
+              }
+              value={settings.volatilityPct}
+              onChange={(volatilityPct) => update({ volatilityPct })}
+              {...LIMITS.volatilityPct}
+            />
+            <SliderField
               label="Inflation rate"
               suffix="%"
               help={
@@ -158,7 +177,7 @@ export function SimulatorView() {
         </section>
 
         <div className="space-y-10">
-          <GrowthChart data={points} />
+          <GrowthChart data={points} range={range} />
           <FeeCard impact={impact} feePct={settings.feePct} years={settings.years} />
         </div>
       </div>

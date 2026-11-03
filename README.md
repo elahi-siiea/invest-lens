@@ -22,9 +22,10 @@ A plain-English investing analysis tool: compare how stocks and ETFs have grown,
 - Plain-English explanations next to the table and "?" help on each term
 
 **Investing simulator**
-- Starting amount, monthly contribution, years, expected return, inflation and annual fee
-- Sliders paired with number inputs, and Conservative, Balanced and Aggressive presets
+- Starting amount, monthly contribution, years, expected return, volatility, inflation and annual fee
+- Sliders paired with number inputs, a volatility input, and Conservative, Balanced and Aggressive presets
 - Chart of nominal balance, inflation-adjusted balance and total contributions
+- A shaded uncertainty band: the middle 80% of 1,000 Monte Carlo paths, driven by a volatility input
 - "Cost of fees" card comparing the final balance with and without the fee
 
 **Across the app**
@@ -89,7 +90,18 @@ All finance math lives in [`src/lib/finance`](src/lib/finance) as pure functions
 
 **Simulator.** The fee is subtracted from the expected return, `net = return − fee`, and converted to a monthly rate `m = (1 + net)^(1/12) − 1`. Each month, `balance = balance × (1 + m) + contribution`, with contributions added at month end. The inflation-adjusted value divides by `(1 + inflation)^years`. The cost of fees is the final balance with a 0% fee minus the final balance with the chosen fee.
 
+**Uncertainty band.** Each of 1,000 paths grows month by month with a lognormal shock: `balance = balance × exp(μ + σ_m × z) + contribution`, where `z` is a standard normal draw, `σ_m = volatility / √12`, and `μ = ln(1 + m) − σ_m² / 2`. The `−σ_m² / 2` term centers the average growth on the deterministic monthly rate `m`, so a volatility of zero reproduces the plain projection exactly. The band shows the 10th and 90th percentile balance at each year end. A fixed random seed keeps it steady while you drag sliders.
+
 These are simplified models. Real returns vary, fees and taxes differ, and nothing here predicts the future.
+
+## Theory behind it
+
+- **Compounding.** The simulator is the future-value formula for a growing annuity, evaluated month by month.
+- **Geometric Brownian motion.** The band models an asset's value as geometric Brownian motion, so returns are lognormal and prices cannot fall below zero. This is the process behind the Black-Scholes option pricing model, and it is the standard way to represent uncertainty in continuous-time investment models, including the real-options work of Dixit and Pindyck in *Investment under Uncertainty* (Princeton University Press, 1994).
+- **Volatility drag.** Because growth compounds, the typical (median) path grows slower than the average one. The `−σ² / 2` term is that effect, and it is why higher volatility lowers the median even when the average return is held fixed.
+- **Risk and return.** Volatility and max drawdown are the risk measures shown beside return in the Compare tool, following the mean-variance idea from Markowitz's "Portfolio Selection" (1952).
+
+Invest Lens applies these ideas at a simple level. It does not implement the real-options models in the book, and it uses no data from it.
 
 ## Project structure
 
@@ -103,7 +115,7 @@ src/
     ui/                Help tooltip, slider field, skeleton, state messages
   hooks/               usePrices
   lib/
-    finance/           Returns, risk, growth math and tests
+    finance/           Returns, risk, growth and Monte Carlo math, with tests
     compare/           Lines up tickers on a shared window
     data/              Twelve Data client, cache, sample data, tickers
 ```

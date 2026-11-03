@@ -10,9 +10,11 @@ export {
 } from "./returns";
 export { annualizedVolatility, maxDrawdown, standardDeviation } from "./risk";
 export { summarizeSeries } from "./summary";
+export { simulateRange } from "./uncertainty";
 export type {
   FeeImpact,
   PricePoint,
+  RangePoint,
   SeriesSummary,
   SimulationInput,
   SimulationPoint,

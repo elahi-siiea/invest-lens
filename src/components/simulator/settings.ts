@@ -7,9 +7,10 @@ export interface SimulatorSettings {
   returnPct: number;
   inflationPct: number;
   feePct: number;
+  volatilityPct: number;
 }
 
-export const SIMULATOR_STORAGE_KEY = "invest-lens:simulator:v1";
+export const SIMULATOR_STORAGE_KEY = "invest-lens:simulator:v2";
 
 export const DEFAULT_SETTINGS: SimulatorSettings = {
   startingAmount: 10_000,
@@ -18,6 +19,7 @@ export const DEFAULT_SETTINGS: SimulatorSettings = {
   returnPct: 6,
   inflationPct: 2.5,
   feePct: 0.5,
+  volatilityPct: 15,
 };
 
 export const LIMITS: Record<keyof SimulatorSettings, { min: number; max: number; step: number }> = {
@@ -27,6 +29,7 @@ export const LIMITS: Record<keyof SimulatorSettings, { min: number; max: number;
   returnPct: { min: 0, max: 15, step: 0.1 },
   inflationPct: { min: 0, max: 10, step: 0.1 },
   feePct: { min: 0, max: 3, step: 0.05 },
+  volatilityPct: { min: 0, max: 40, step: 0.5 },
 };
 
 export interface Preset {
@@ -35,19 +38,21 @@ export interface Preset {
   returnPct: number;
   inflationPct: number;
   feePct: number;
+  volatilityPct: number;
 }
 
 export const PRESETS: readonly Preset[] = [
-  { id: "conservative", name: "Conservative", returnPct: 4, inflationPct: 2.5, feePct: 0.2 },
-  { id: "balanced", name: "Balanced", returnPct: 6, inflationPct: 2.5, feePct: 0.2 },
-  { id: "aggressive", name: "Aggressive", returnPct: 8, inflationPct: 2.5, feePct: 0.2 },
+  { id: "conservative", name: "Conservative", returnPct: 4, inflationPct: 2.5, feePct: 0.2, volatilityPct: 6 },
+  { id: "balanced", name: "Balanced", returnPct: 6, inflationPct: 2.5, feePct: 0.2, volatilityPct: 12 },
+  { id: "aggressive", name: "Aggressive", returnPct: 8, inflationPct: 2.5, feePct: 0.2, volatilityPct: 18 },
 ];
 
 export function matchesPreset(settings: SimulatorSettings, preset: Preset): boolean {
   return (
     settings.returnPct === preset.returnPct &&
     settings.inflationPct === preset.inflationPct &&
-    settings.feePct === preset.feePct
+    settings.feePct === preset.feePct &&
+    settings.volatilityPct === preset.volatilityPct
   );
 }
 

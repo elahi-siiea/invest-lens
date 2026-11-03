@@ -37,6 +37,14 @@ export interface SimulationPoint {
   contributions: number;
 }
 
+/** Balance at the 10th, 50th and 90th percentile of simulated paths. */
+export interface RangePoint {
+  year: number;
+  low: number;
+  median: number;
+  high: number;
+}
+
 export interface FeeImpact {
   withFee: number;
   withoutFee: number;

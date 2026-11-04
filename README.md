@@ -2,7 +2,9 @@
 
 A plain-English investing analysis tool: compare how stocks and ETFs have grown, and explore how savings could grow over time.
 
-![The investing simulator with its uncertainty band and cost of fees card](docs/simulator.jpg)
+| Compare investments | Investing simulator |
+| --- | --- |
+| ![Compare tool: growth of $10,000 for VTI, QQQ and AAPL against the S&P 500](docs/compare.jpg) | ![Investing simulator with its uncertainty band and cost of fees card](docs/simulator.jpg) |
 
 > **For educational purposes only. Not financial advice. Past performance does not predict future results.**
 

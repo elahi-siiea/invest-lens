@@ -9,6 +9,7 @@ import { buildComparison } from "@/lib/compare/build";
 import { BENCHMARK_SYMBOL, MIN_TICKERS } from "@/lib/data/tickers";
 import type { DataError } from "@/lib/data/types";
 import { usePersistedState } from "@/lib/storage";
+import { CapmSection } from "./CapmSection";
 import { CompareChart } from "./CompareChart";
 import { DataNotice } from "./DataNotice";
 import { Explainer } from "./Explainer";
@@ -48,7 +49,7 @@ function ResultsSkeleton() {
 export function CompareView() {
   const [settings, save] = usePersistedState(COMPARE_STORAGE_KEY, DEFAULT_COMPARE, parseCompareSettings);
   const [attempt, setAttempt] = useState(0);
-  const { tickers, range, sample } = settings;
+  const { tickers, range, sample, riskFreePct } = settings;
 
   const ready = tickers.length >= MIN_TICKERS;
   const symbols = ready ? (tickers.includes(BENCHMARK_SYMBOL) ? tickers : [...tickers, BENCHMARK_SYMBOL]) : [];
@@ -106,7 +107,7 @@ export function CompareView() {
       );
     }
 
-    const result = buildComparison(prices.data.series, tickers, range);
+    const result = buildComparison(prices.data.series, tickers, range, riskFreePct / 100);
     if (!result.ok) {
       return (
         <StateMessage tone="error" title="These do not overlap enough">
@@ -128,6 +129,12 @@ export function CompareView() {
         </div>
         <CompareChart comparison={comparison} tickers={tickers} />
         <SummaryTable lines={comparison.lines} />
+        <CapmSection
+          comparison={comparison}
+          tickers={tickers}
+          riskFreePct={riskFreePct}
+          onRiskFreeChange={(next) => update({ riskFreePct: next })}
+        />
         <Explainer />
       </div>
     );

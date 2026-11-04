@@ -1,6 +1,14 @@
 import { BENCHMARK_SYMBOL } from "@/lib/data/tickers";
 import type { PriceSeries } from "@/lib/data/types";
-import { growthOf, MONTHS_PER_YEAR, summarizeSeries, type PricePoint, type SeriesSummary } from "@/lib/finance";
+import {
+  analyzeCapm,
+  growthOf,
+  MONTHS_PER_YEAR,
+  summarizeSeries,
+  type CapmResult,
+  type PricePoint,
+  type SeriesSummary,
+} from "@/lib/finance";
 
 export const RANGES = [
   { id: "1Y", label: "1Y", years: 1 },
@@ -18,6 +26,7 @@ export interface ComparisonLine {
   label: string;
   isBenchmark: boolean;
   summary: SeriesSummary;
+  capm: CapmResult;
 }
 
 export interface Comparison {
@@ -45,10 +54,15 @@ function monthOf(point: PricePoint): string {
 
 /**
  * Lines up the chosen tickers (and the S&P 500 benchmark) on one shared
- * window. The window ends at the earliest last month, and starts at the
+ * window and runs CAPM against the benchmark. The window ends at the earliest last month, and starts at the
  * latest first month, or at the range length if that is later.
  */
-export function buildComparison(series: readonly PriceSeries[], tickers: readonly string[], range: RangeId): ComparisonResult {
+export function buildComparison(
+  series: readonly PriceSeries[],
+  tickers: readonly string[],
+  range: RangeId,
+  riskFreeAnnual: number,
+): ComparisonResult {
   const bySymbol = new Map(series.map((entry) => [entry.symbol, entry.points]));
   const keys = tickers.includes(BENCHMARK_SYMBOL) ? [...tickers] : [...tickers, BENCHMARK_SYMBOL];
 
@@ -78,11 +92,13 @@ export function buildComparison(series: readonly PriceSeries[], tickers: readonl
   }
 
   const months = windowed[0]!.points.map(monthOf);
+  const benchmarkPoints = windowed.find(({ key }) => key === BENCHMARK_SYMBOL)!.points;
   const lines: ComparisonLine[] = windowed.map(({ key, points }) => ({
     key,
     label: key === BENCHMARK_SYMBOL && !tickers.includes(key) ? "S&P 500 (SPY)" : key,
     isBenchmark: key === BENCHMARK_SYMBOL,
     summary: summarizeSeries(points),
+    capm: analyzeCapm(points, benchmarkPoints, riskFreeAnnual),
   }));
 
   const growth = new Map(

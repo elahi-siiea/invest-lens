@@ -1,3 +1,4 @@
+export { analyzeCapm, capmExpectedReturn, covariance } from "./capm";
 export { costOfFees, finalBalance, monthlyRate, simulateGrowth } from "./growth";
 export {
   annualizedReturn,
@@ -12,6 +13,7 @@ export { annualizedVolatility, maxDrawdown, standardDeviation } from "./risk";
 export { summarizeSeries } from "./summary";
 export { simulateRange } from "./uncertainty";
 export type {
+  CapmResult,
   FeeImpact,
   PricePoint,
   RangePoint,

@@ -15,7 +15,8 @@ A plain-English investing analysis tool: compare how stocks and ETFs have grown,
 - Ranges of 1Y, 5Y, 10Y and Max, all lined up on the same start date
 - Line chart of the growth of $10,000
 - Summary table: total return, annualized return, volatility, max drawdown, best year and worst year
-- Plain-English explanations next to the table and "?" help on each term
+- A CAPM view: beta, CAPM expected return, Jensen's alpha and R² for each ticker against the S&P 500, with a security market line chart and an adjustable risk-free rate
+- Plain-English explanations next to the tables and "?" help on each term
 
 **Investing simulator**
 - Starting amount, monthly contribution, years, expected return, volatility, inflation and annual fee
@@ -95,6 +96,10 @@ All finance math lives in [`src/lib/finance`](src/lib/finance) as pure functions
 | Volatility | Sample standard deviation of monthly returns `× √12` |
 | Max drawdown | `min over t of (Pₜ / highest price so far − 1)` |
 | Best and worst year | December-to-December return for each full calendar year in the range |
+| Beta | Slope of the asset's monthly excess returns on the benchmark's: `cov(r_asset − r_f, r_mkt − r_f) / var(r_mkt − r_f)` |
+| R² | Squared correlation of those excess returns |
+| CAPM expected return | `r_f + beta × (r_mkt − r_f)`, with annualized returns and the risk-free rate you set |
+| Alpha (Jensen's) | Actual annualized return minus the CAPM expected return |
 
 **Simulator.** The fee is subtracted from the expected return, `net = return − fee`, and converted to a monthly rate `m = (1 + net)^(1/12) − 1`. Each month, `balance = balance × (1 + m) + contribution`, with contributions added at month end. The inflation-adjusted value divides by `(1 + inflation)^years`. The cost of fees is the final balance with a 0% fee minus the final balance with the chosen fee.
 
@@ -107,6 +112,7 @@ These are simplified models. Real returns vary, fees and taxes differ, and nothi
 - **Compounding.** The simulator is the future-value formula for a growing annuity, evaluated month by month.
 - **Geometric Brownian motion.** The band models an asset's value as geometric Brownian motion, so returns are lognormal and prices cannot fall below zero. This is the process behind the Black-Scholes option pricing model, and it is the standard way to represent uncertainty in continuous-time investment models, including the real-options work of Dixit and Pindyck in *Investment under Uncertainty* (Princeton University Press, 1994).
 - **Volatility drag.** Because growth compounds, the typical (median) path grows slower than the average one. The `−σ² / 2` term is that effect, and it is why higher volatility lowers the median even when the average return is held fixed.
+- **Capital Asset Pricing Model.** CAPM says only market risk is rewarded: an asset's expected return is the risk-free rate plus its beta times the market's excess return. The Compare tool estimates beta by regression over the months shown, plots each ticker against the security market line, and reports Jensen's alpha as the gap between actual and expected return. It is a one-factor model, it uses the benchmark's realized return in place of an expected one, and short ranges give noisy betas. The model comes from Sharpe (1964) and Lintner (1965), and alpha as a performance measure from Jensen (1968).
 - **Risk and return.** Volatility and max drawdown are the risk measures shown beside return in the Compare tool, following the mean-variance idea from Markowitz's "Portfolio Selection" (1952).
 
 Invest Lens applies these ideas at a simple level. It does not implement the real-options models in the book, and it uses no data from it.

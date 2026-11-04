@@ -18,6 +18,20 @@ export interface SeriesSummary {
   worstYear: YearReturn | null;
 }
 
+export interface CapmResult {
+  /** Sensitivity of the asset's excess return to the market's excess return. */
+  beta: number;
+  /** Share of the asset's ups and downs explained by the market, from 0 to 1. */
+  rSquared: number;
+  /** Annualized return CAPM predicts for this beta. */
+  expectedReturn: number;
+  actualReturn: number;
+  /** Jensen's alpha: actual annualized return minus the CAPM expected return. */
+  alpha: number;
+  /** Annualized return of the market (benchmark) over the same months. */
+  marketReturn: number;
+}
+
 export interface SimulationInput {
   startingAmount: number;
   monthlyContribution: number;

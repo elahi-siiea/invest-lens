@@ -2,13 +2,7 @@
 
 A plain-English investing analysis tool: compare how stocks and ETFs have grown, and explore how savings could grow over time.
 
-[Live demo](#) <!-- Replace with the Vercel URL after deploying -->
-
-| Compare investments | Investing simulator |
-| --- | --- |
-| ![Compare investments screenshot](docs/compare.png) | ![Investing simulator screenshot](docs/simulator.png) |
-
-> Screenshots are placeholders. Add `docs/compare.png` and `docs/simulator.png`.
+![The investing simulator with its uncertainty band and cost of fees card](docs/simulator.jpg)
 
 > **For educational purposes only. Not financial advice. Past performance does not predict future results.**
 

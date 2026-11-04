@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "description": "Compare how stocks and ETFs have grown, and explore how savings could grow over time. For educational purposes only.",
+  "license": "MIT",
+  "engines": { "node": ">=22.18" },
   "scripts": {
     "dev": "next dev",
     "build": "next build",

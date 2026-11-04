@@ -40,26 +40,32 @@ export function SimulatorView() {
         <h2 id="results-heading" className="sr-only">
           Projected results
         </h2>
-        <dl className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-3">
-          <div className="col-span-2 sm:col-span-1">
-            <dt className="text-sm text-muted">Balance after {settings.years} {settings.years === 1 ? "year" : "years"}</dt>
-            <dd className="mt-1 font-display text-4xl sm:text-5xl">{formatUsd(last?.nominal ?? 0)}</dd>
+        <dl className="grid grid-cols-1 divide-y divide-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+          <div className="py-5 first:pt-0 sm:px-8 sm:py-0 sm:first:pl-0 sm:last:pr-0">
+            <dt className="flex min-h-6 items-center text-sm text-muted">
+              Balance after {settings.years} {settings.years === 1 ? "year" : "years"}
+            </dt>
+            <dd className="mt-2 font-display text-4xl tracking-tight sm:text-5xl">{formatUsd(last?.nominal ?? 0)}</dd>
           </div>
-          <div>
-            <dt className="flex items-center gap-2 text-sm text-muted">
+          <div className="py-5 sm:px-8 sm:py-0">
+            <dt className="flex min-h-6 items-center gap-2 text-sm text-muted">
               In today&apos;s dollars
               <HelpTip term="inflation-adjusted value">
                 The same balance, measured in what money buys today. Prices rise over time, so a future dollar buys less
                 than a dollar now.
               </HelpTip>
             </dt>
-            <dd className="mt-1 font-display text-3xl">{formatUsd(last?.real ?? 0)}</dd>
+            <dd className="mt-2 font-display text-4xl tracking-tight sm:text-5xl">{formatUsd(last?.real ?? 0)}</dd>
           </div>
-          <div>
-            <dt className="text-sm text-muted">Total you put in</dt>
-            <dd className="mt-1 font-display text-3xl">{formatUsd(last?.contributions ?? 0)}</dd>
+          <div className="py-5 last:pb-0 sm:px-8 sm:py-0 sm:last:pr-0">
+            <dt className="flex min-h-6 items-center text-sm text-muted">Total you put in</dt>
+            <dd className="mt-2 font-display text-4xl tracking-tight sm:text-5xl">{formatUsd(last?.contributions ?? 0)}</dd>
           </div>
         </dl>
+        <p className="mt-6 text-sm text-muted">
+          Assumes {settings.returnPct}% a year before fees, a {settings.feePct}% fee, {settings.inflationPct}% inflation and{" "}
+          {settings.volatilityPct}% volatility.
+        </p>
       </section>
 
       <div className="mt-10 grid gap-12 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-16">

@@ -93,7 +93,7 @@ export function CompareView() {
               <Button variant={removable ? "secondary" : "primary"} onClick={() => setAttempt((count) => count + 1)}>
                 Try again
               </Button>
-              {error.source === "live" && (
+              {(error.source === "live" || error.source === "snapshot") && (
                 <Button onClick={() => update({ sample: true })}>Use sample data</Button>
               )}
             </>
@@ -119,7 +119,7 @@ export function CompareView() {
     return (
       <div className="space-y-12">
         <div className="space-y-3">
-          <DataNotice source={prices.data.source} chosen={sample} onTryLive={() => update({ sample: false })} />
+          <DataNotice source={prices.data.source} asOf={prices.data.asOf} chosen={sample} onTryLive={() => update({ sample: false })} />
           {comparison.shortHistory && (
             <p className="text-sm text-muted">
               {comparison.shortHistory.symbol} only has data since {comparison.start}, so every line starts there.

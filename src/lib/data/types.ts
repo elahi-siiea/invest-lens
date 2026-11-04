@@ -1,6 +1,7 @@
 import type { PricePoint } from "@/lib/finance";
 
-export type DataSource = "live" | "sample";
+/** live: Twelve Data. snapshot: history downloaded locally. sample: generated demo data. */
+export type DataSource = "live" | "snapshot" | "sample";
 
 export interface PriceSeries {
   symbol: string;
@@ -9,6 +10,8 @@ export interface PriceSeries {
 
 export interface PricesResponse {
   source: DataSource;
+  /** For snapshot data, the date it was downloaded. */
+  asOf?: string;
   series: PriceSeries[];
 }
 

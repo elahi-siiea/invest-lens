@@ -1,7 +1,7 @@
 const TERMS = [
   {
     term: "Total return",
-    text: "How much the starting $10,000 grew or shrank over the whole period, including reinvested dividends in live data.",
+    text: "How much the starting $10,000 grew or shrank over the whole period, including reinvested dividends when the data is real (not sample).",
   },
   {
     term: "Annualized return",

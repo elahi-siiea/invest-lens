@@ -40,20 +40,27 @@ Next.js (App Router), TypeScript in strict mode, Tailwind CSS, Recharts, Vitest.
 
 ## Run locally
 
-Requires Node.js 20 or newer.
+Requires Node.js 22.18 or newer.
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open <http://localhost:3000>. With no API key the app runs on bundled sample data.
+Open <http://localhost:3000>. To see real market history, download it once:
+
+```bash
+npm run data:fetch
+```
+
+Without a download or an API key, the app falls back to generated sample data and labels it clearly.
 
 ```bash
 npm test          # unit tests
 npm run typecheck # TypeScript
 npm run lint      # ESLint
 npm run build     # production build
+npm run data:fetch # download real monthly price history
 ```
 
 ## Environment variables
@@ -66,14 +73,19 @@ Copy `.env.example` to `.env.local` to use live prices.
 
 ## Data
 
-Prices come from the [Twelve Data](https://twelvedata.com) `time_series` endpoint as monthly closes adjusted for splits and dividends. The free Basic plan allows 8 requests per minute and 800 per day. I chose it over Alpha Vantage, whose free plan allows 25 requests per day.
+The app picks the first source that is available and always says which one is on screen:
 
-- **Server only.** The browser calls `/api/prices`; the route handler holds the key.
-- **Cached.** Each ticker is cached in memory for 12 hours, duplicate in-flight requests are shared, unknown tickers are remembered for an hour, and responses carry CDN cache headers.
-- **Sample data.** Without a key (or if a visitor chooses it after a live-data error) the app shows a "Using sample data" notice. The sample series are **generated, not real**: a seeded random walk with a shared market factor, so the same numbers appear on every load. They exist so the demo works for everyone and must not be read as market history.
+1. **Twelve Data (live).** Set `TWELVE_DATA_API_KEY` and prices come from the [Twelve Data](https://twelvedata.com) `time_series` endpoint as monthly closes adjusted for splits and dividends. The free Basic plan allows 8 requests per minute and 800 per day. I chose it over Alpha Vantage, whose free plan allows 25 requests per day.
+2. **Downloaded real history.** `npm run data:fetch` saves monthly, dividend-adjusted closes from January 1993 to `data/history.json` for the suggested tickers. Add more with `npm run data:fetch -- KO PEP`. The file is not committed.
+3. **Sample data.** If neither is set up, the app uses generated series so it still runs. They are **not real**: a seeded random walk with a shared market factor, the same on every load. A "Using sample data" notice is always shown with them.
+
+Details:
+- **Server only.** The browser calls `/api/prices`; the route handler holds any API key and reads the downloaded file.
+- **Cached.** Live tickers are cached in memory for 12 hours, duplicate in-flight requests are shared, unknown tickers are remembered for an hour, and responses carry CDN cache headers.
 - **Benchmark.** The S&P 500 line uses SPY as a stand-in.
+- **History starts in 1993.** That is when SPY began trading. Yahoo returns coarser bars for ranges that reach further back, which would break the monthly math, so the download starts there.
 
-Before deploying publicly with a free key, read Twelve Data's terms for the Basic plan. Their attribution guidance asks for visible credit where their data is shown, which the app provides.
+**About the downloaded data.** It comes from Yahoo Finance's unofficial chart endpoint, which has no published terms for this use and can change or block requests without notice. It is meant for personal and educational use. That is why the download is a script you run yourself and the data stays out of the repository. Do not publish `data/history.json` or serve it from a public site. For a public deployment, use a Twelve Data key and read their terms first: their attribution guidance asks for visible credit where their data is shown, which the app provides, and their free plan lists "internal non-display usage".
 
 ## How the calculations work
 
@@ -117,12 +129,13 @@ src/
   lib/
     finance/           Returns, risk, growth and Monte Carlo math, with tests
     compare/           Lines up tickers on a shared window
-    data/              Twelve Data client, cache, sample data, tickers
+    data/              Twelve Data client, downloaded-history reader, cache, sample data, tickers
+scripts/               fetch-history.mts (downloads real monthly history)
 ```
 
 ## Data source credit
 
-Market data provided by [Twelve Data](https://twelvedata.com).
+Live market data: [Twelve Data](https://twelvedata.com). Downloaded history: Yahoo Finance, for personal and educational use.
 
 ## Disclaimer
 

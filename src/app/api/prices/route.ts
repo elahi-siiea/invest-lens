@@ -37,7 +37,7 @@ export async function GET(request: Request): Promise<Response> {
       headers: { "Cache-Control": "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400" },
     });
   } catch (error) {
-    if (error instanceof DataError) return errorResponse(error, activeSource(forceSample));
-    return errorResponse(new DataError("UPSTREAM", "Something went wrong while loading prices."), activeSource(forceSample));
+    if (error instanceof DataError) return errorResponse(error, await activeSource(forceSample));
+    return errorResponse(new DataError("UPSTREAM", "Something went wrong while loading prices."), await activeSource(forceSample));
   }
 }

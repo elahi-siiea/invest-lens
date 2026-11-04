@@ -135,6 +135,10 @@ Live market data: [Twelve Data](https://twelvedata.com). Downloaded history: Yah
 
 For educational purposes only. Not financial advice. Past performance does not predict future results. Invest Lens does not recommend any investment, strategy or ticker.
 
+## Contributing
+
+Issues and pull requests are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) first, and note the [code of conduct](CODE_OF_CONDUCT.md) and [security policy](SECURITY.md).
+
 ## License
 
 [MIT](LICENSE)

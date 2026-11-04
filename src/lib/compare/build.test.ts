@@ -80,5 +80,6 @@ describe("buildComparison", () => {
     expect(benchmark?.capm.beta).toBeCloseTo(1, 10);
     expect(benchmark?.capm.alpha).toBeCloseTo(0, 10);
     expect(qqq?.capm.beta).toBeGreaterThan(1);
+    expect(qqq?.sharpe).toBeCloseTo(((qqq?.summary.annualizedReturn ?? 0) - RF) / (qqq?.summary.volatility ?? 1), 10);
   });
 });

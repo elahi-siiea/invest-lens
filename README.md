@@ -15,7 +15,7 @@ A plain-English investing analysis tool: compare how stocks and ETFs have grown,
 - Ranges of 1Y, 5Y, 10Y and Max, all lined up on the same start date
 - Line chart of the growth of $10,000
 - Summary table: total return, annualized return, volatility, max drawdown, best year and worst year
-- A CAPM view: beta, CAPM expected return, Jensen's alpha and R² for each ticker against the S&P 500, with a security market line chart and an adjustable risk-free rate
+- A CAPM view: beta, CAPM expected return, Jensen's alpha, Sharpe ratio and R² for each ticker against the S&P 500, with a security market line chart and an adjustable risk-free rate
 - Plain-English explanations next to the tables and "?" help on each term
 
 **Investing simulator**
@@ -100,6 +100,7 @@ All finance math lives in [`src/lib/finance`](src/lib/finance) as pure functions
 | R² | Squared correlation of those excess returns |
 | CAPM expected return | `r_f + beta × (r_mkt − r_f)`, with annualized returns and the risk-free rate you set |
 | Alpha (Jensen's) | Actual annualized return minus the CAPM expected return |
+| Sharpe ratio | `(annualized return − r_f) / annualized volatility` |
 
 **Simulator.** The fee is subtracted from the expected return, `net = return − fee`, and converted to a monthly rate `m = (1 + net)^(1/12) − 1`. Each month, `balance = balance × (1 + m) + contribution`, with contributions added at month end. The inflation-adjusted value divides by `(1 + inflation)^years`. The cost of fees is the final balance with a 0% fee minus the final balance with the chosen fee.
 

@@ -170,7 +170,7 @@ export function CapmSection({ comparison, tickers, riskFreePct, onRiskFreeChange
       </figure>
 
       <div className="mt-6 hidden overflow-x-auto sm:block">
-        <table className="w-full min-w-[40rem] text-left">
+        <table className="w-full min-w-[46rem] text-left">
           <caption className="sr-only">CAPM measures for each investment against the benchmark</caption>
           <thead>
             <tr className="border-b border-edge text-sm text-muted">
@@ -192,6 +192,15 @@ export function CapmSection({ comparison, tickers, riskFreePct, onRiskFreeChange
                   <HelpTip term="alpha" align="end">
                     Actual return minus the CAPM expected return. Positive means it beat what its beta predicted over
                     this period. It does not mean it will do so again.
+                  </HelpTip>
+                </span>
+              </th>
+              <th scope="col" className="px-3 py-3 text-right font-medium">
+                <span className="inline-flex items-center justify-end gap-1.5">
+                  Sharpe
+                  <HelpTip term="the Sharpe ratio" align="end">
+                    Return above the risk-free rate for each unit of volatility. Higher means more reward for the
+                    swings. It uses the risk-free rate you set above.
                   </HelpTip>
                 </span>
               </th>
@@ -219,6 +228,7 @@ export function CapmSection({ comparison, tickers, riskFreePct, onRiskFreeChange
                 <td className={`px-3 py-4 text-right ${alphaTone(line.capm.alpha)}`}>
                   {line.isBenchmark ? "n/a" : formatSignedPercent(line.capm.alpha)}
                 </td>
+                <td className="px-3 py-4 text-right">{line.sharpe.toFixed(2)}</td>
                 <td className="px-3 py-4 text-right">{line.capm.rSquared.toFixed(2)}</td>
               </tr>
             ))}
@@ -234,6 +244,10 @@ export function CapmSection({ comparison, tickers, riskFreePct, onRiskFreeChange
               <div>
                 <dt className="text-muted">Beta</dt>
                 <dd className="mt-0.5 text-base">{line.capm.beta.toFixed(2)}</dd>
+              </div>
+              <div>
+                <dt className="text-muted">Sharpe</dt>
+                <dd className="mt-0.5 text-base">{line.sharpe.toFixed(2)}</dd>
               </div>
               <div>
                 <dt className="text-muted">R&sup2;</dt>

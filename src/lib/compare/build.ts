@@ -2,6 +2,7 @@ import { BENCHMARK_SYMBOL } from "@/lib/data/tickers";
 import type { PriceSeries } from "@/lib/data/types";
 import {
   analyzeCapm,
+  sharpeRatio,
   growthOf,
   MONTHS_PER_YEAR,
   summarizeSeries,
@@ -27,6 +28,7 @@ export interface ComparisonLine {
   isBenchmark: boolean;
   summary: SeriesSummary;
   capm: CapmResult;
+  sharpe: number;
 }
 
 export interface Comparison {
@@ -93,13 +95,17 @@ export function buildComparison(
 
   const months = windowed[0]!.points.map(monthOf);
   const benchmarkPoints = windowed.find(({ key }) => key === BENCHMARK_SYMBOL)!.points;
-  const lines: ComparisonLine[] = windowed.map(({ key, points }) => ({
-    key,
-    label: key === BENCHMARK_SYMBOL && !tickers.includes(key) ? "S&P 500 (SPY)" : key,
-    isBenchmark: key === BENCHMARK_SYMBOL,
-    summary: summarizeSeries(points),
-    capm: analyzeCapm(points, benchmarkPoints, riskFreeAnnual),
-  }));
+  const lines: ComparisonLine[] = windowed.map(({ key, points }) => {
+    const summary = summarizeSeries(points);
+    return {
+      key,
+      label: key === BENCHMARK_SYMBOL && !tickers.includes(key) ? "S&P 500 (SPY)" : key,
+      isBenchmark: key === BENCHMARK_SYMBOL,
+      summary,
+      capm: analyzeCapm(points, benchmarkPoints, riskFreeAnnual),
+      sharpe: sharpeRatio(summary.annualizedReturn, riskFreeAnnual, summary.volatility),
+    };
+  });
 
   const growth = new Map(
     windowed.map(({ key, points }) => [key, new Map(growthOf(STARTING_AMOUNT, points.map((p) => p.close)).map((value, i) => [monthOf(points[i]!), value]))]),

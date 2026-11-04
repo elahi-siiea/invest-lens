@@ -1,4 +1,4 @@
-export { analyzeCapm, capmExpectedReturn, covariance } from "./capm";
+export { analyzeCapm, capmExpectedReturn, covariance, sharpeRatio } from "./capm";
 export { costOfFees, finalBalance, monthlyRate, simulateGrowth } from "./growth";
 export {
   annualizedReturn,

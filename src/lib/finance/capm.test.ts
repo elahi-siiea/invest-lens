@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { analyzeCapm, capmExpectedReturn, covariance } from "./capm";
+import { analyzeCapm, capmExpectedReturn, covariance, sharpeRatio } from "./capm";
 import type { PricePoint } from "./types";
 
 /** Builds a month-end price series from a list of monthly returns. */
@@ -43,6 +43,20 @@ describe("capmExpectedReturn", () => {
 
   it("equals the risk-free rate when beta is zero", () => {
     expect(capmExpectedReturn(0.03, 0, 0.1)).toBeCloseTo(0.03);
+  });
+});
+
+describe("sharpeRatio", () => {
+  it("divides the excess return by the volatility", () => {
+    expect(sharpeRatio(0.1, 0.03, 0.14)).toBeCloseTo(0.5);
+  });
+
+  it("is negative when the return is below the risk-free rate", () => {
+    expect(sharpeRatio(0.01, 0.03, 0.1)).toBeCloseTo(-0.2);
+  });
+
+  it("rejects zero volatility", () => {
+    expect(() => sharpeRatio(0.1, 0.03, 0)).toThrow(RangeError);
   });
 });
 

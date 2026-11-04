@@ -17,6 +17,12 @@ export function capmExpectedReturn(riskFree: number, beta: number, marketReturn:
   return riskFree + beta * (marketReturn - riskFree);
 }
 
+/** Return above the risk-free rate, per unit of volatility. */
+export function sharpeRatio(annualReturn: number, riskFree: number, annualVolatility: number): number {
+  if (!(annualVolatility > 0)) throw new RangeError("volatility must be positive");
+  return (annualReturn - riskFree) / annualVolatility;
+}
+
 function annualized(points: readonly PricePoint[]): number {
   const first = points[0];
   const last = points[points.length - 1];
